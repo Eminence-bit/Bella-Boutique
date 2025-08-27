@@ -14,7 +14,7 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 Security vulnerabilities should be reported privately to avoid potential exploitation.
 
 ### 2. **DO** report via email
-Send an email to [your-email@domain.com] with:
+Send an email to [naniprajyoth123@gmail.com] with:
 - A clear description of the vulnerability
 - Steps to reproduce the issue
 - Potential impact assessment
@@ -73,9 +73,8 @@ We appreciate security researchers who:
 
 ## Security Contacts
 
-- **Primary**: [your-email@domain.com]
-- **Backup**: [backup-email@domain.com]
-- **PGP Key**: [if applicable]
+- **Primary**: [naniprajyoth123@gmail.com]
+- **Backup**: [prajyothnani123@gmail.com]
 
 ## Acknowledgments
 
