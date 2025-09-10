@@ -24,7 +24,7 @@ interface ProductFormData {
 }
 
 export function AdminPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const { products, loading: productsLoading, refetch } = useProducts();
   const { toast } = useToast();
   
@@ -38,9 +38,9 @@ export function AdminPage() {
     images: [],
   });
 
-  // Redirect if not authenticated
-  if (!authLoading && !user) {
-    return <Navigate to="/login" replace />;
+  // Redirect if not authenticated or not admin
+  if (!authLoading && (!user || !isAdmin)) {
+    return <Navigate to="/catalog" replace />;
   }
 
   if (authLoading) return <PageLoader />;
