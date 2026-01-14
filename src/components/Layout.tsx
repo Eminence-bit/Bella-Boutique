@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Home, Grid3X3, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -10,9 +10,11 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
+    navigate('/');
   };
 
   return (
@@ -25,7 +27,7 @@ export function Layout({ children }: LayoutProps) {
               <ShoppingBag className="h-6 w-6 text-primary" />
               <span className="text-xl font-bold">Bella Boutique</span>
             </Link>
-            
+
             <nav className="hidden md:flex items-center space-x-6">
               <Link
                 to="/"

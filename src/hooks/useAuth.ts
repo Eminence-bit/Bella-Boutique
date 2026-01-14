@@ -9,17 +9,21 @@ export function useAuth() {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      }
       setLoading(false);
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
-      setLoading(false);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        // Don't set loading false here, we update profile in background or rely on initial load
+        // But if we switched users, we might want to reload profile
+        await fetchProfile(session.user.id);
       } else {
         setProfile(null);
       }
@@ -29,23 +33,39 @@ export function useAuth() {
   }, []);
 
   const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    if (error && error.code === 'PGRST116') {
-      // Profile doesn't exist, insert default
-      const { data: { user } } = await supabase.auth.getUser();
-      const role = user?.email === 'admin@bellaboutique.com' ? 'admin' : 'user';
-      const { error: insertError } = await supabase
+    try {
+      const { data, error } = await supabase
         .from('profiles')
-        .insert({ id: userId, role });
-      if (!insertError) {
-        fetchProfile(userId); // Refetch
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        // Profile doesn't exist, insert default
+        console.log('Profile not found, creating...');
+        const { data: { user } } = await supabase.auth.getUser();
+        const role = user?.email === 'admin@bellaboutique.com' ? 'admin' : 'user';
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({ id: userId, role });
+        if (!insertError) {
+          // Refetch after insert
+          const { data: newProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
+          setProfile(newProfile);
+        } else {
+          console.error('Error creating profile:', insertError);
+        }
+      } else if (error) {
+        console.error('Error fetching profile:', error);
+      } else if (data) {
+        setProfile(data);
       }
-    } else if (data) {
-      setProfile(data);
+    } catch (err) {
+      console.error('Unexpected error in fetchProfile:', err);
     }
   };
 
