@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, UserPlus } from 'lucide-react';
+import { Loader2, UserPlus } from 'lucide-react';
 
 export function CustomerManager() {
     const [customers, setCustomers] = useState<Customer[]>([]);

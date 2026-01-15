@@ -3,15 +3,15 @@ import { useAuth } from '@/hooks/useAuth';
 import { useProducts } from '@/hooks/useProducts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LoadingSpinner, PageLoader } from '@/components/LoadingSpinner';
-import { Package, DollarSign, Tag, Users, Activity, Shield } from 'lucide-react';
+import { PageLoader } from '@/components/LoadingSpinner';
+import { Package, DollarSign, Tag, Users, Activity } from 'lucide-react';
 import { InventoryManager } from '@/components/admin/InventoryManager';
 import { SalesTracker } from '@/components/admin/SalesTracker';
 import { CustomerManager } from '@/components/admin/CustomerManager';
 
 export function AdminPage() {
   const { user, isAdmin, loading: authLoading } = useAuth();
-  const { products, loading: productsLoading, refetch } = useProducts();
+  const { products, refetch } = useProducts();
 
   // Redirect if not authenticated or not admin
   if (!authLoading && (!user || !isAdmin)) {

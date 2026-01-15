@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, X, Upload, Edit, Trash2 } from 'lucide-react';
+import { Loader2, Plus, X, Edit, Trash2 } from 'lucide-react';
 import { Product } from '@/lib/supabase';
 
 interface InventoryManagerProps {

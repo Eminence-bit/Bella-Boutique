@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, ShieldAlert, Check, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 export function StaffManager() {
