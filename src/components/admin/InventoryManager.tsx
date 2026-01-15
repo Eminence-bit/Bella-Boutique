@@ -31,7 +31,7 @@ export function InventoryManager({ products, onUpdate }: InventoryManagerProps) 
         images: [] as File[],
     });
 
-    const categories = [...new Set(products.map(p => p.category))].sort();
+    const categories = [...new Set(products.map(p => p.category).filter(c => c && c.trim() !== ''))].sort();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -196,7 +196,11 @@ export function InventoryManager({ products, onUpdate }: InventoryManagerProps) 
                                                 <SelectContent>
                                                     <SelectItem value="Clothing">Clothing</SelectItem>
                                                     <SelectItem value="Jewelry">Jewelry</SelectItem>
-                                                    {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                                                    <SelectItem value="Beauty">Beauty</SelectItem>
+                                                    <SelectItem value="Accessories">Accessories</SelectItem>
+                                                    {categories.filter(c => !['Clothing', 'Jewelry', 'Beauty', 'Accessories'].includes(c)).map(c => (
+                                                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                             <Input placeholder="New" onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))} className="w-24" />

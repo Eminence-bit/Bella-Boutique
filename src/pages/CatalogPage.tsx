@@ -22,7 +22,7 @@ export function CatalogPage() {
 
   // Get unique categories from products
   const categories = useMemo(() => {
-    const uniqueCategories = [...new Set(products.map(p => p.category))];
+    const uniqueCategories = [...new Set(products.map(p => p.category).filter(c => c && c.trim() !== ''))];
     return uniqueCategories.sort();
   }, [products]);
 
@@ -108,7 +108,7 @@ export function CatalogPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((category) => (
+              {categories.filter(category => category && category.trim().length > 0).map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
                 </SelectItem>
