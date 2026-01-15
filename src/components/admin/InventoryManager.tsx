@@ -329,16 +329,18 @@ export function InventoryManager({ products, onUpdate }: InventoryManagerProps) 
                                                         size="icon"
                                                         onClick={() => handleEdit(product)}
                                                         title="Edit product"
+                                                        className="hover:bg-blue-50"
                                                     >
-                                                        <Edit className="h-4 w-4" />
+                                                        <Edit className="h-4 w-4 text-blue-600" />
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
                                                         onClick={() => handleDelete(product.id)}
                                                         title="Delete product"
+                                                        className="hover:bg-red-50"
                                                     >
-                                                        <Trash2 className="h-4 w-4 text-red-500" />
+                                                        <Trash2 className="h-4 w-4 text-red-600" />
                                                     </Button>
                                                 </div>
                                             </TableCell>

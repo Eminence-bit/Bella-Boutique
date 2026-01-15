@@ -10,7 +10,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    include: ['lucide-react'],
   },
   build: {
     // Performance: Enable code splitting
@@ -20,6 +20,7 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-select', '@radix-ui/react-tabs'],
           'supabase-vendor': ['@supabase/supabase-js'],
+          'icons-vendor': ['lucide-react'],
         },
       },
     },
