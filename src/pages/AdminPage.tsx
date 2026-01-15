@@ -11,7 +11,7 @@ import { CustomerManager } from '@/components/admin/CustomerManager';
 
 export function AdminPage() {
   const { user, isAdmin, loading: authLoading } = useAuth();
-  const { products, refetch } = useProducts();
+  const { products } = useProducts();
 
   // Redirect if not authenticated or not admin
   if (!authLoading && (!user || !isAdmin)) {
@@ -98,7 +98,7 @@ export function AdminPage() {
         </TabsList>
 
         <TabsContent value="inventory" className="space-y-4">
-          <InventoryManager products={products} onUpdate={refetch} />
+          <InventoryManager products={products} />
         </TabsContent>
 
         <TabsContent value="sales" className="space-y-4">

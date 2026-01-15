@@ -13,10 +13,9 @@ import { Product } from '@/lib/supabase';
 
 interface InventoryManagerProps {
     products: Product[];
-    onUpdate: () => void;
 }
 
-export function InventoryManager({ products, onUpdate }: InventoryManagerProps) {
+export function InventoryManager({ products }: InventoryManagerProps) {
     const { toast } = useToast();
     const [uploading, setUploading] = useState(false);
     const [customFields, setCustomFields] = useState<{ key: string, value: string }[]>([]);
@@ -58,8 +57,8 @@ export function InventoryManager({ products, onUpdate }: InventoryManagerProps) 
     };
 
     const uploadImages = async (files: File[]) => {
-        const imageUrls: string[] = [];
-        for (const file of files) {
+        // Performance: Upload images in parallel instead of sequentially
+        const uploadPromises = files.map(async (file) => {
             const fileExt = file.name.split('.').pop();
             const fileName = `${Date.now()}_${Math.random()}.${fileExt}`;
             const { data, error } = await supabase.storage.from('product-images').upload(fileName, file);
@@ -67,9 +66,10 @@ export function InventoryManager({ products, onUpdate }: InventoryManagerProps) 
             if (error) throw error;
 
             const { data: publicUrl } = supabase.storage.from('product-images').getPublicUrl(data.path);
-            imageUrls.push(publicUrl.publicUrl);
-        }
-        return imageUrls;
+            return publicUrl.publicUrl;
+        });
+
+        return await Promise.all(uploadPromises);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -86,7 +86,7 @@ export function InventoryManager({ products, onUpdate }: InventoryManagerProps) 
             }, {} as Record<string, string>);
 
             if (editingProduct) {
-                // Update existing product
+                // Update database
                 const { error } = await supabase.from('products').update({
                     name: formData.name,
                     description: formData.description,
@@ -99,8 +99,11 @@ export function InventoryManager({ products, onUpdate }: InventoryManagerProps) 
                 }).eq('id', editingProduct.id);
 
                 if (error) throw error;
+                
                 toast({ title: 'Success', description: 'Product updated successfully' });
                 setEditingProduct(null);
+                
+                // Real-time subscription will update the UI automatically
             } else {
                 // Insert new product
                 const { error } = await supabase.from('products').insert([{
@@ -116,11 +119,12 @@ export function InventoryManager({ products, onUpdate }: InventoryManagerProps) 
 
                 if (error) throw error;
                 toast({ title: 'Success', description: 'Product added successfully' });
+                
+                // Real-time subscription will update the UI automatically
             }
 
             setFormData({ name: '', description: '', price: '', category: '', stock: '1', images: [] });
             setCustomFields([]);
-            onUpdate();
 
             // Reset file input
             const fileInput = document.getElementById('images') as HTMLInputElement;
@@ -158,7 +162,7 @@ export function InventoryManager({ products, onUpdate }: InventoryManagerProps) 
             if (error) throw error;
 
             toast({ title: 'Success', description: 'Product deleted successfully' });
-            onUpdate();
+            // Real-time subscription will update the UI automatically
         } catch (error) {
             console.error('Error deleting product:', error);
             toast({ title: 'Error', description: 'Failed to delete product', variant: 'destructive' });
