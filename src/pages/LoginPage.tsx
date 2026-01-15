@@ -79,6 +79,25 @@ export function LoginPage() {
     setError('');
 
     try {
+      // Security: Basic input validation
+      if (!formData.email || !formData.password) {
+        setError('Email and password are required');
+        setLoading(false);
+        return;
+      }
+
+      // Security: Rate limiting check (client-side)
+      const lastAttempt = localStorage.getItem('lastLoginAttempt');
+      if (lastAttempt) {
+        const timeSinceLastAttempt = Date.now() - parseInt(lastAttempt);
+        if (timeSinceLastAttempt < 2000) { // 2 seconds between attempts
+          setError('Please wait before trying again');
+          setLoading(false);
+          return;
+        }
+      }
+      localStorage.setItem('lastLoginAttempt', Date.now().toString());
+
       const { error } = isLogin
         ? await signIn(formData.email, formData.password)
         : await signUp(formData.email, formData.password);
@@ -144,6 +163,7 @@ export function LoginPage() {
                     disabled={loading}
                     className="pl-9"
                     autoComplete="email"
+                    maxLength={100}
                   />
                 </div>
               </div>
@@ -161,7 +181,8 @@ export function LoginPage() {
                     onChange={handleInputChange}
                     required
                     disabled={loading}
-                    minLength={6}
+                    minLength={8}
+                    maxLength={100}
                     className="pl-9"
                     autoComplete={isLogin ? "current-password" : "new-password"}
                   />

@@ -41,13 +41,14 @@ export function useAuth() {
         .single();
 
       if (error && error.code === 'PGRST116') {
-        // Profile doesn't exist, insert default
-        console.log('Profile not found, creating...');
-        const { data: { user } } = await supabase.auth.getUser();
-        const role = user?.email === 'admin@bellaboutique.com' ? 'admin' : 'user';
+        // Profile doesn't exist, insert default with 'user' role
+        // Security: Admin role should be assigned manually via database
+        if (import.meta.env.DEV) {
+          console.log('Profile not found, creating with default user role');
+        }
         const { error: insertError } = await supabase
           .from('profiles')
-          .insert({ id: userId, role });
+          .insert({ id: userId, role: 'user' });
         if (!insertError) {
           // Refetch after insert
           const { data: newProfile } = await supabase
@@ -57,15 +58,21 @@ export function useAuth() {
             .single();
           setProfile(newProfile);
         } else {
-          console.error('Error creating profile:', insertError);
+          if (import.meta.env.DEV) {
+            console.error('Error creating profile:', insertError);
+          }
         }
       } else if (error) {
-        console.error('Error fetching profile:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error fetching profile:', error);
+        }
       } else if (data) {
         setProfile(data);
       }
     } catch (err) {
-      console.error('Unexpected error in fetchProfile:', err);
+      if (import.meta.env.DEV) {
+        console.error('Unexpected error in fetchProfile:', err);
+      }
     }
   };
 
@@ -78,17 +85,28 @@ export function useAuth() {
   };
 
   const signUp = async (email: string, password: string) => {
+    // Security: Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { data: null, error: { message: 'Invalid email format' } as any };
+    }
+
+    // Security: Validate password strength
+    if (password.length < 8) {
+      return { data: null, error: { message: 'Password must be at least 8 characters' } as any };
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
     if (data.user && !error) {
-      // Insert profile with role based on email
-      const role = email === 'admin@bellaboutique.com' ? 'admin' : 'user';
+      // Security: All new users get 'user' role by default
+      // Admin role must be assigned manually via database
       const { error: profileError } = await supabase
         .from('profiles')
-        .insert({ id: data.user.id, role });
-      if (profileError) {
+        .insert({ id: data.user.id, role: 'user' });
+      if (profileError && import.meta.env.DEV) {
         console.error('Error creating profile:', profileError);
       }
       // Refetch to get profile

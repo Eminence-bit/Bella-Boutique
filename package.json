@@ -1,6 +1,6 @@
 {
   "name": "bella-boutique",
-  "private": false,
+  "private": true,
   "version": "1.0.0",
   "type": "module",
   "description": "A modern, elegant e-commerce catalog website for ladies fashion and accessories",

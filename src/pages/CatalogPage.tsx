@@ -32,11 +32,13 @@ export function CatalogPage() {
 
     // Filter by search query
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      const query = searchQuery.toLowerCase().trim();
+      // Security: Limit search query length to prevent DoS
+      const sanitizedQuery = query.slice(0, 100);
       filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query) ||
-        product.category.toLowerCase().includes(query)
+        product.name.toLowerCase().includes(sanitizedQuery) ||
+        product.description.toLowerCase().includes(sanitizedQuery) ||
+        product.category.toLowerCase().includes(sanitizedQuery)
       );
     }
 

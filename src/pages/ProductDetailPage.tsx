@@ -44,8 +44,13 @@ export function ProductDetailPage() {
   const generateWhatsAppMessage = () => {
     if (!product) return '';
     
-    const message = `Hi! I'm interested in *${product.name}* priced at ${formatPrice(product.price)}. Is it available?`;
-    return `https://wa.me/919876543210?text=${encodeURIComponent(message)}`;
+    // Security: Sanitize product name to prevent injection
+    const sanitizedName = product.name.replace(/[*_~`]/g, '');
+    const message = `Hi! I'm interested in *${sanitizedName}* priced at ${formatPrice(product.price)}. Is it available?`;
+    
+    // Use environment variable for WhatsApp number
+    const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '917286887889';
+    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
   };
 
   const nextImage = () => {
@@ -91,11 +96,17 @@ export function ProductDetailPage() {
         {/* Image Gallery */}
         <div className="space-y-4">
           {/* Main Image */}
-          <div className="relative aspect-square overflow-hidden rounded-lg border">
+          <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
             <img
               src={currentImage}
               alt={product.name}
               className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
+              onError={(e) => {
+                // Performance: Fallback for broken images
+                e.currentTarget.src = 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg';
+              }}
             />
             
             {/* Image Navigation */}
@@ -136,6 +147,11 @@ export function ProductDetailPage() {
                   src={currentImage}
                   alt={product.name}
                   className="w-full h-auto max-h-[80vh] object-contain"
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg';
+                  }}
                 />
               </DialogContent>
             </Dialog>
@@ -167,6 +183,11 @@ export function ProductDetailPage() {
                     src={image}
                     alt={`${product.name} ${index + 1}`}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg';
+                    }}
                   />
                 </button>
               ))}

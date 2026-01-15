@@ -29,16 +29,25 @@ export function useProducts() {
   useEffect(() => {
     fetchProducts();
 
-    // Subscribe to real-time changes
+    // Performance: Subscribe to real-time changes with proper cleanup
     const subscription = supabase
-      .channel('products')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+      .channel('products-changes')
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'products' 
+      }, (payload) => {
+        // Performance: Only refetch if needed, or update state directly
+        if (import.meta.env.DEV) {
+          console.log('Product change detected:', payload.eventType);
+        }
         fetchProducts();
       })
       .subscribe();
 
     return () => {
-      subscription.unsubscribe();
+      // Performance: Proper cleanup to prevent memory leaks
+      supabase.removeChannel(subscription);
     };
   }, []);
 

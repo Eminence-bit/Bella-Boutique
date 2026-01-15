@@ -23,12 +23,17 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card className="group overflow-hidden transition-all duration-200 hover:shadow-lg">
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative aspect-square overflow-hidden bg-muted">
         <img
           src={primaryImage}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
           loading="lazy"
+          decoding="async"
+          onError={(e) => {
+            // Performance: Fallback for broken images
+            e.currentTarget.src = 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg';
+          }}
         />
         {product.status === 'Sold Out' && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
