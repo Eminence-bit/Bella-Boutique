@@ -32,6 +32,24 @@ A modern, elegant e-commerce catalog website showcasing beautiful fashion, jewel
 
 Visit [Bella Boutique](https://your-domain.com) to explore our collection.
 
+## 🚀 Deployment
+
+This project is configured for automatic deployment to Netlify:
+
+- **Auto-Deploy**: Pushes to `main` branch automatically deploy to Netlify
+- **CI/CD**: GitHub Actions runs tests and builds on every push
+- **Environment Variables**: Configure in Netlify Dashboard
+
+### Netlify Configuration
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Environment variables required:
+  - `VITE_SUPABASE_URL`
+  - `VITE_SUPABASE_ANON_KEY`
+  - `VITE_WHATSAPP_NUMBER`
+
+---
+
 ## 🛠️ Technology Stack
 
 - **Frontend**: React 18 + TypeScript + Vite
